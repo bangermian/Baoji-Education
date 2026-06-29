@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+        /* 返回首页按钮 */
+        .back-home {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .avatar-box {
+            /* 固定定位，永久左上角 */
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999; /* 防止被其他内容盖住 */
+        }
+        .avatar {
+            /* 一寸证件尺寸 宽2.5cm≈95px 高3.5cm≈133px */
+            width: 95px;
+            height: 133px;
+            object-fit: cover;
+            /* 矩形边框，不圆形，模拟照片白边 */
+            border: 6px solid #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            border-radius: 4px; /* 轻微圆角，想要直角直接删这行 */
+        }
+
+        .profile-header {
+            margin-top: 160px; /* 给左上角固定头像留出空间，避免文字被挡住 */
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .info h2 {
+            font-size: 26px;
+            color: #222;
+            margin-bottom: 6px;
+        }
+        .info .title {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .info .tag {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #407bff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .line {
+            width: 100%;
+            height: 1px;
+            background: #eee;
+            margin: 30px 0;
+        }
+        .content h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #222;
+        }
+        .content p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 16px;
+            text-indent: 2em;
+        }
+        .back-home {
+        display: inline-block;
+        margin-bottom: 24px;
+        color: #0066cc;
+        text-decoration: none;
+        }
+/* 新增右下角按钮样式 */
+        .next-btn {
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        padding: 12px 22px;
+        background: #0066cc;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(0,102,204,0.25);
+        z-index: 998;
+        transition: all 0.2s ease;
+        }
+        .next-btn:hover {
+        background-color: #004b99;
+        }
+        .prev-btn {
+        position: fixed;
+        left: 30px;
+        bottom: 30px;
+        padding: 12px 22px;
+        background: #666;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+        z-index: 998;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-home">← 返回首页</a>
+
+        <!-- 头像+姓名头衔 -->
+        <div class="profile-header">
+            <img class="avatar" src="../img/touxiang1.png" alt="个人头像">
+            <div class="info">
+                <h2>zhouyuhan20</h2>
+                <div class="title" style="margin-top: 2px;">首席JJBAO网站创建者</div>
+                <div class="title" style="margin-top: 2px;">温州肯恩大学心理学学士在读</div>
+            </div>
+        </div>
+
+        <div class="line"></div>
+
+        <!-- 详细介绍 -->
+        <div class="content">
+            <h3>个人简介</h3>
+            <p>2026年6月25日和Lorelei构思了该网站</p>
+            <p>2026年6月28日开发了此网站</p>
+        </div>
+        <a href="about2.html" class="next-btn">下一页 →</a>
+        <a href="about.html" class="prev-btn">← 上一页</a>
+    </div>
+</body>
+</html>
