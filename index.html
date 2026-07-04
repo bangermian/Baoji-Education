@@ -102,47 +102,39 @@
         <h1>豹鸡教育</h1>
         <p>一万豹鸡，助您NB</p>
     </main>
-    <!-- 留言板块 开始 -->
+    <!-- 留言板块 -->
 <div class="container">
   <div class="section-title">
     <h2>访客留言</h2>
   </div>
-
-  <!-- 发布留言表单 -->
-  <div style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
+  <!-- 原生表单POST，浏览器不会触发CORB跨域拦截 -->
+  <form action="/api/messages" method="POST" style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
+    <input type="hidden" name="_gotcha" style="display:none;">
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">昵称</label>
-      <input id="nickname" type="text" placeholder="输入你的昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
+      <input name="nickname" type="text" required placeholder="输入昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
     </div>
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">留言内容</label>
-      <textarea id="content" rows="4" placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
+      <textarea name="content" rows="4" required placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
     </div>
-    <!-- 人机验证 -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb" data-callback="saveToken"></div>
-    <p id="msgTip" style="margin:12px 0;color:#aaa;"></p>
-    <button id="submitMsg" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">提交留言</button>
+    <!-- 替换为你的前端SiteKey，无需手动取token，表单自动携带验证参数 -->
+    <div class="cf-turnstile" data-sitekey="你的前端SiteKey"></div>
+    <br>
+    <button type="submit" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
   </div>
 
-  <!-- 历史留言展示区域 -->
+  <h2 style="text-align:center;font-size:22px;color:#0099ff;margin:40px 0 20px;">全部留言</h2>
   <div id="messageList"></div>
 </div>
 
-<!-- Turnstile验证脚本 -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/sitekey/0x4AAAAAADvgdPft7ZLjJFnb/turnstile.js" async defer></script>
+<!-- 仅保留加载留言的GET请求，无提交跨域 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/sitekey=你的前端SiteKey/turnstile.js" async defer></script>
 <script>
-const API = "https://baojijiaoyu86.top/api/messages";
-const tip = document.getElementById("msgTip");
+const API = "/api/messages";
 const listBox = document.getElementById("messageList");
-let cfToken = "";
 
-// 验证完成自动保存token
-function saveToken(token) {
-  cfToken = token;
-}
-
-// 加载留言
-async function loadMsg() {
+async function loadMessages() {
   try {
     const res = await fetch(API);
     const json = await res.json();
@@ -163,56 +155,9 @@ async function loadMsg() {
     listBox.innerHTML = html;
   } catch (err) {
     listBox.innerHTML = "<p style='text-align:center;color:#f66;'>留言加载失败</p>";
-    console.error(err);
   }
 }
-
-// 页面加载读取留言
-loadMsg();
-
-// 提交按钮点击事件
-document.getElementById("submitMsg").addEventListener("click", async () => {
-  tip.innerText = "正在提交...";
-  const name = document.getElementById("nickname").value.trim();
-  const text = document.getElementById("content").value.trim();
-
-  if (!name || !text) {
-    tip.innerText = "请填写昵称和留言内容";
-    return;
-  }
-  if (!cfToken) {
-    tip.innerText = "请完成人机验证";
-    return;
-  }
-
-  try {
-    const res = await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        nickname: name,
-        content: text,
-        turnstileToken: cfToken
-      })
-    });
-    const ret = await res.json();
-    tip.innerText = ret.msg;
-    if (ret.code === 200) {
-      // 清空输入
-      document.getElementById("nickname").value = "";
-      document.getElementById("content").value = "";
-      cfToken = "";
-      // 刷新留言列表
-      loadMsg();
-    }
-  } catch (err) {
-    tip.innerText = "提交失败，接口跨域或服务器异常";
-    console.error(err);
-  }
-})
+loadMessages();
 </script>
-<!-- 留言板块 结束 -->
 </body>
 </html>
