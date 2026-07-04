@@ -129,17 +129,23 @@
 const API = "/api/messages";
 const tipText = document.getElementById("tipText");
 const listBox = document.getElementById("messageList");
+// D1 UTC时间字符串 → 标准北京时间（Asia/Shanghai）
 function utcStrToBeijing(utcStr) {
-  const utcDate = new Date(utcStr + " UTC");
-  const bjMs = utcDate.getTime() + 8 * 3600 * 1000;
-  const d = new Date(bjMs);
-  const Y = d.getFullYear();
-  const M = String(d.getMonth() + 1).padStart(2, "0");
-  const D = String(d.getDate()).padStart(2, "0");
-  const h = String(d.getHours()).padStart(2, "0");
-  const m = String(d.getMinutes()).padStart(2, "0");
-  const s = String(d.getSeconds()).padStart(2, "0");
-  return `${Y}-${M}-${D} ${h}:${m}:${s}`;
+  // 拼接成标准UTC ISO格式
+  const iso = utcStr.replace(" ", "T") + "Z";
+  const d = new Date(iso);
+  const formatOpt = {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  };
+  // 输出 2026-07-05 20:51:00 这种格式
+  return new Intl.DateTimeFormat("zh-CN", formatOpt).format(d).replace("/", "-").replace("/", "-").replace(" ", " ");
 }
 async function loadMessages() {
   try {
