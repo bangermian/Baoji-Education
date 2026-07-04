@@ -102,5 +102,91 @@
         <h1>豹鸡教育</h1>
         <p>一万豹鸡，助您NB</p>
     </main>
+    <!-- 留言板块 开始 -->
+<div class="container">
+  <div class="section-title">
+    <h2>访客留言</h2>
+  </div>
+
+  <!-- 发布留言表单 -->
+  <div style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
+    <div style="margin-bottom:18px;">
+      <label style="display:block;color:#eee;margin-bottom:8px;">昵称</label>
+      <input id="nickname" type="text" placeholder="输入你的昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
+    </div>
+    <div style="margin-bottom:18px;">
+      <label style="display:block;color:#eee;margin-bottom:8px;">留言内容</label>
+      <textarea id="content" rows="4" placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
+    </div>
+    <!-- 人机验证 -->
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb"></div>
+    <p id="msgTip" style="margin:12px 0;color:#aaa;"></p>
+    <button id="submitMsg" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">提交留言</button>
+  </div>
+
+  <!-- 历史留言展示区域 -->
+  <div id="messageList"></div>
+</div>
+
+<!-- Turnstile验证脚本 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/sitekey/0x4AAAAAADvgdPft7ZLjJFnb/turnstile.js" async defer></script>
+<script>
+const API = "https://baojijiaoyu86.top/api/messages";
+const tip = document.getElementById("msgTip");
+const listBox = document.getElementById("messageList");
+
+// 加载所有留言
+async function loadMsg() {
+  const res = await fetch(API);
+  const json = await res.json();
+  let html = "";
+  if (json.data.length === 0) {
+    html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
+  } else {
+    json.data.forEach(item => {
+      html += `
+        <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
+          <div style="color:#0099ff;font-size:18px;margin-bottom:6px;">${item.nickname}</div>
+          <div style="color:#888;font-size:13px;margin-bottom:10px;">${item.create_time}</div>
+          <div style="color:#eee;line-height:1.7;">${item.content}</div>
+        </div>
+      `;
+    })
+  }
+  listBox.innerHTML = html;
+}
+
+// 页面加载自动读取留言
+loadMsg();
+
+// 提交留言点击事件
+document.getElementById("submitMsg").addEventListener("click", async () => {
+  tip.innerText = "正在提交...";
+  const name = document.getElementById("nickname").value.trim();
+  const text = document.getElementById("content").value.trim();
+  const token = document.querySelector("iframe[name^='cf-turnstile']")?.contentDocument.querySelector("input[name=cf-turnstile-response]")?.value;
+
+  if (!name || !text || !token) {
+    tip.innerText = "请填写昵称、留言并完成验证";
+    return;
+  }
+
+  const res = await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nickname: name, content: text, turnstileToken: token })
+  });
+  const ret = await res.json();
+  tip.innerText = ret.msg;
+
+  if (ret.code === 200) {
+    // 清空输入框，刷新留言列表
+    document.getElementById("nickname").value = "";
+    document.getElementById("content").value = "";
+    loadMsg();
+  }
+})
+</script>
+<!-- 留言板块 结束 -->
 </body>
 </html>
