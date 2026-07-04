@@ -164,7 +164,7 @@ document.getElementById("submitMsg").addEventListener("click", async () => {
   tip.innerText = "正在提交...";
   const name = document.getElementById("nickname").value.trim();
   const text = document.getElementById("content").value.trim();
-  const token = document.querySelector("iframe[name^='cf-turnstile']")?.contentDocument.querySelector("input[name=cf-turnstile-response]")?.value;
+  const token = await turnstile.getResponse();
 
   if (!name || !text || !token) {
     tip.innerText = "请填写昵称、留言并完成验证";
@@ -180,9 +180,10 @@ document.getElementById("submitMsg").addEventListener("click", async () => {
   tip.innerText = ret.msg;
 
   if (ret.code === 200) {
-    // 清空输入框，刷新留言列表
     document.getElementById("nickname").value = "";
     document.getElementById("content").value = "";
+    // 重置验证框
+    turnstile.reset();
     loadMsg();
   }
 })
