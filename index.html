@@ -182,13 +182,20 @@ loadMessages();
 
 // 发布留言
 document.getElementById("submitBtn").addEventListener("click", async () => {
-  tipText.innerText = "提交中...";
+  
+   // 1. 判断是否勾选
+  const checkBox = document.getElementById("humanCheck");
+  if (!checkBox.checked) {
+    alert("请勾选「我不是机器人」后再发布！");
+    return;
+  }
   const nickname = document.getElementById("nickname").value.trim();
   const content = document.getElementById("content").value.trim();
   if (!nickname || !content) {
     tipText.innerText = "请填写昵称和留言内容";
     return;
   }
+  tipText.innerText = "提交中...";
   try {
     const resp = await fetch(API, {
       method: "POST",
@@ -200,6 +207,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     if (data.code === 200) {
       document.getElementById("nickname").value = "";
       document.getElementById("content").value = "";
+      checkBox.checked = false; // 发布成功取消勾选
       loadMessages();
     }
   } catch (err) {
