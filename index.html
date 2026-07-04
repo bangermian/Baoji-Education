@@ -108,29 +108,40 @@
     <h2>访客留言</h2>
   </div>
 
-  <!-- 原生表单POST，无任何验证、无第三方脚本 -->
-  <form action="/api/messages" method="POST" style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
-    <input type="hidden" name="_gotcha" style="display:none;">
+  <!-- 发布留言表单 -->
+  <div style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">昵称</label>
-      <input name="nickname" type="text" required placeholder="输入你的昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
+      <input id="nickname" type="text" placeholder="输入你的昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
     </div>
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">留言内容</label>
-      <textarea name="content" rows="4" required placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
+      <textarea id="content" rows="4" placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
     </div>
-    <button type="submit" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
-  </form>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb" data-callback="saveToken"></div>
+    <p id="tipText" style="margin:12px 0;color:#aaa;"></p>
+    <button id="submitBtn" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
+  </div>
 
   <h2 style="text-align:center;font-size:22px;color:#0099ff;margin:40px 0 20px;">全部留言</h2>
   <div id="messageList"></div>
 </div>
 
-<!-- 仅保留加载留言GET请求，无提交跨域问题 -->
+<!-- Turnstile脚本 -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/0x4AAAAAADvgdPft7ZLjJFnb/turnstile.js" async defer crossorigin="anonymous"></script>
 <script>
 const API = "/api/messages";
+const tipText = document.getElementById("tipText");
 const listBox = document.getElementById("messageList");
+let token = "";
 
+// 人机验证回调
+window.saveToken = function(t) {
+  token = t;
+  tipText.innerText = "✅ 验证完成，可以提交";
+};
+
+// 加载所有留言（新增删除按钮）
 async function loadMessages() {
   try {
     const res = await fetch(API);
@@ -141,10 +152,14 @@ async function loadMessages() {
     } else {
       json.data.forEach(item => {
         html += `
-        <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
-          <div style="color:#0099ff;font-size:18px;margin-bottom:6px;">${item.nickname}</div>
-          <div style="color:#888;font-size:13px;margin-bottom:10px;">${item.create_time}</div>
-          <div style="color:#eee;line-height:1.7;">${item.content}</div>
+        <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="color:#0099ff;font-size:18px;margin-bottom:6px;">${item.nickname}</div>
+            <div style="color:#888;font-size:13px;margin-bottom:10px;">${item.create_time}</div>
+            <div style="color:#eee;line-height:1.7;">${item.content}</div>
+          </div>
+          <!-- 删除按钮，携带留言ID -->
+          <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
         </div>
         `;
       })
@@ -155,6 +170,58 @@ async function loadMessages() {
   }
 }
 loadMessages();
+
+// 异步发布留言
+document.getElementById("submitBtn").addEventListener("click", async () => {
+  tipText.innerText = "提交中...";
+  const nickname = document.getElementById("nickname").value.trim();
+  const content = document.getElementById("content").value.trim();
+  if (!nickname || !content) {
+    tipText.innerText = "请填写昵称和留言内容";
+    return;
+  }
+  if (!token) {
+    tipText.innerText = "请完成下方人机验证";
+    return;
+  }
+  try {
+    const resp = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nickname, content, turnstileToken: token })
+    });
+    const data = await resp.json();
+    tipText.innerText = data.msg;
+    if (data.code === 200) {
+      document.getElementById("nickname").value = "";
+      document.getElementById("content").value = "";
+      token = "";
+      loadMessages();
+    }
+  } catch (err) {
+    tipText.innerText = "提交失败，跨域拦截，请刷新页面重试";
+  }
+});
+
+// 删除留言函数（弹窗输入管理密码）
+window.delMsg = async function(id) {
+  const pwd = prompt("请输入管理密码，删除本条留言");
+  if (!pwd) return;
+  try {
+    const res = await fetch(API, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: id, adminPwd: pwd })
+    });
+    const data = await res.json();
+    alert(data.msg);
+    if (data.code === 200) {
+      loadMessages();
+    }
+  } catch (err) {
+    alert("删除请求失败，请刷新页面重试");
+  }
+}
 </script>
 </body>
 </html>
