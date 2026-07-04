@@ -108,7 +108,6 @@
     <h2>访客留言</h2>
   </div>
 
-  <!-- 原生表单，Turnstile自动插入cf-turnstile-response字段 -->
   <form action="/api/messages" method="POST" style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
     <input type="hidden" name="_gotcha" style="display:none;">
     <div style="margin-bottom:18px;">
@@ -119,9 +118,6 @@
       <label style="display:block;color:#eee;margin-bottom:8px;">留言内容</label>
       <textarea name="content" rows="4" required placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
     </div>
-    <!-- 仅保留验证组件，删除回调，不用JS操作token -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb"></div>
-    <br>
     <button type="submit" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
   </form>
 
@@ -129,12 +125,11 @@
   <div id="messageList"></div>
 </div>
 
-<!-- Turnstile脚本添加跨域属性 -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/0x4AAAAAADvgdPft7ZLjJFnb/turnstile.js" async defer crossorigin="anonymous"></script>
-<!-- 仅保留加载留言的GET请求，无提交相关JS -->
+<!-- 仅保留加载留言的GET请求，无第三方脚本 -->
 <script>
 const API = "/api/messages";
 const listBox = document.getElementById("messageList");
+
 async function loadMessages() {
   try {
     const res = await fetch(API);
