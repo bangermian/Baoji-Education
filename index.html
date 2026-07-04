@@ -107,33 +107,46 @@
   <div class="section-title">
     <h2>访客留言</h2>
   </div>
-  <!-- 原生表单POST，浏览器不会触发CORB跨域拦截 -->
+
   <form action="/api/messages" method="POST" style="background:#1a1d25;padding:30px;border-radius:14px;margin-bottom:50px;">
+    <!-- 防垃圾隐藏字段 -->
     <input type="hidden" name="_gotcha" style="display:none;">
+    <!-- 存储验证token的隐藏输入框，关键修复 -->
+    <input id="tokenInput" name="turnstileToken" type="hidden" value="">
+
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">昵称</label>
-      <input name="nickname" type="text" required placeholder="输入昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
+      <input name="nickname" type="text" required placeholder="输入你的昵称" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;">
     </div>
     <div style="margin-bottom:18px;">
       <label style="display:block;color:#eee;margin-bottom:8px;">留言内容</label>
       <textarea name="content" rows="4" required placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
     </div>
-    <!-- 替换为你的前端SiteKey，无需手动取token，表单自动携带验证参数 -->
-    <div class="cf-turnstile" data-sitekey="你的前端SiteKey"></div>
-    <br>
+
+    <!-- 替换为你的前端Turnstile站点密钥 -->
+    <div class="cf-turnstile" data-sitekey="你的前端SiteKey" data-callback="saveTokenToInput"></div>
+    <p id="tipText" style="margin:12px 0;color:#aaa;"></p>
     <button type="submit" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
-  </div>
+  </form>
 
   <h2 style="text-align:center;font-size:22px;color:#0099ff;margin:40px 0 20px;">全部留言</h2>
   <div id="messageList"></div>
 </div>
 
-<!-- 仅保留加载留言的GET请求，无提交跨域 -->
+<!-- Turnstile验证脚本 -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/sitekey=你的前端SiteKey/turnstile.js" async defer></script>
 <script>
 const API = "/api/messages";
 const listBox = document.getElementById("messageList");
+const tipText = document.getElementById("tipText");
 
+// 验证完成自动把token存入隐藏输入框
+function saveTokenToInput(token) {
+  document.getElementById("tokenInput").value = token;
+  tipText.innerText = "验证通过，可以提交";
+}
+
+// 加载所有留言（仅GET请求，无跨域问题）
 async function loadMessages() {
   try {
     const res = await fetch(API);
@@ -157,6 +170,8 @@ async function loadMessages() {
     listBox.innerHTML = "<p style='text-align:center;color:#f66;'>留言加载失败</p>";
   }
 }
+
+// 页面加载自动读取留言
 loadMessages();
 </script>
 </body>
