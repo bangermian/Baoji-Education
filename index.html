@@ -129,7 +129,18 @@
 const API = "/api/messages";
 const tipText = document.getElementById("tipText");
 const listBox = document.getElementById("messageList");
-
+function utcStrToBeijing(utcStr) {
+  const utcDate = new Date(utcStr + " UTC");
+  const bjMs = utcDate.getTime() + 8 * 3600 * 1000;
+  const d = new Date(bjMs);
+  const Y = d.getFullYear();
+  const M = String(d.getMonth() + 1).padStart(2, "0");
+  const D = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const m = String(d.getMinutes()).padStart(2, "0");
+  const s = String(d.getSeconds()).padStart(2, "0");
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`;
+}
 async function loadMessages() {
   try {
     const res = await fetch(API);
@@ -143,7 +154,7 @@ async function loadMessages() {
         <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
             <div style="color:#0099ff;font-size:18px;margin-bottom:6px;">${item.nickname}</div>
-            <div style="color:#888;font-size:13px;margin-bottom:10px;">${item.create_time}</div>
+            <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
             <div style="color:#eee;line-height:1.7;">${item.content}</div>
           </div>
           <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
