@@ -119,7 +119,7 @@
       <textarea id="content" rows="4" placeholder="写下你的想法" style="width:100%;padding:12px;background:#2c303a;border:none;border-radius:8px;color:#fff;font-size:16px;"></textarea>
     </div>
     <!-- 人机验证 -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvgdPft7ZLjJFnb" data-callback="saveToken"></div>
     <p id="msgTip" style="margin:12px 0;color:#aaa;"></p>
     <button id="submitMsg" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">提交留言</button>
   </div>
@@ -134,57 +134,82 @@
 const API = "https://baojijiaoyu86.top/api/messages";
 const tip = document.getElementById("msgTip");
 const listBox = document.getElementById("messageList");
+let cfToken = "";
 
-// 加载所有留言
+// 验证完成自动保存token
+function saveToken(token) {
+  cfToken = token;
+}
+
+// 加载留言
 async function loadMsg() {
-  const res = await fetch(API);
-  const json = await res.json();
-  let html = "";
-  if (json.data.length === 0) {
-    html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
-  } else {
-    json.data.forEach(item => {
-      html += `
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
+    let html = "";
+    if (json.data.length === 0) {
+      html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
+    } else {
+      json.data.forEach(item => {
+        html += `
         <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
           <div style="color:#0099ff;font-size:18px;margin-bottom:6px;">${item.nickname}</div>
           <div style="color:#888;font-size:13px;margin-bottom:10px;">${item.create_time}</div>
           <div style="color:#eee;line-height:1.7;">${item.content}</div>
         </div>
-      `;
-    })
+        `;
+      })
+    }
+    listBox.innerHTML = html;
+  } catch (err) {
+    listBox.innerHTML = "<p style='text-align:center;color:#f66;'>留言加载失败</p>";
+    console.error(err);
   }
-  listBox.innerHTML = html;
 }
 
-// 页面加载自动读取留言
+// 页面加载读取留言
 loadMsg();
 
-// 提交留言点击事件
+// 提交按钮点击事件
 document.getElementById("submitMsg").addEventListener("click", async () => {
   tip.innerText = "正在提交...";
   const name = document.getElementById("nickname").value.trim();
   const text = document.getElementById("content").value.trim();
-  const token = await turnstile.getResponse();
 
-  if (!name || !text || !token) {
-    tip.innerText = "请填写昵称、留言并完成验证";
+  if (!name || !text) {
+    tip.innerText = "请填写昵称和留言内容";
+    return;
+  }
+  if (!cfToken) {
+    tip.innerText = "请完成人机验证";
     return;
   }
 
-  const res = await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nickname: name, content: text, turnstileToken: token })
-  });
-  const ret = await res.json();
-  tip.innerText = ret.msg;
-
-  if (ret.code === 200) {
-    document.getElementById("nickname").value = "";
-    document.getElementById("content").value = "";
-    // 重置验证框
-    turnstile.reset();
-    loadMsg();
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nickname: name,
+        content: text,
+        turnstileToken: cfToken
+      })
+    });
+    const ret = await res.json();
+    tip.innerText = ret.msg;
+    if (ret.code === 200) {
+      // 清空输入
+      document.getElementById("nickname").value = "";
+      document.getElementById("content").value = "";
+      cfToken = "";
+      // 刷新留言列表
+      loadMsg();
+    }
+  } catch (err) {
+    tip.innerText = "提交失败，接口跨域或服务器异常";
+    console.error(err);
   }
 })
 </script>
