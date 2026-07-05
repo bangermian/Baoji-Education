@@ -162,18 +162,16 @@ async function loadMessages() {
   try {
     const res = await fetch(API);
     const json = await res.json();
-    let list = json.data;
-    // 根据标记切换排序
+    let list = [...json.data];
     if (!sortNew) {
-      // 最早在前：反转数组
       list = list.reverse();
     }
     let html = "";
     if (list.length === 0) {
       html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
     } else {
-      list.forEach((item, index) => {
-        const floorNum = index + 1;
+      list.forEach((item) => {
+        const floorNum = item.id;
         html += `
         <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
