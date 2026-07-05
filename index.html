@@ -171,6 +171,20 @@ async function loadMessages() {
           <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
         </div>
         `;
+        html += `
+<div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;">
+  <div>
+    <!-- 新增楼层 #${item.id}楼 -->
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+      <span style="color:#0099ff;font-size:18px;">${item.nickname}</span>
+      <span style="color:#999;font-size:14px;">#${item.id}楼</span>
+    </div>
+    <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
+    <div style="color:#eee;line-height:1.7;">${item.content}</div>
+  </div>
+  <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
+</div>
+`;
       })
     }
     listBox.innerHTML = html;
