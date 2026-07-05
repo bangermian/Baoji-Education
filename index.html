@@ -202,18 +202,18 @@ async function loadMessages() {
   try {
     const res = await fetch(API);
     const json = await res.json();
-    let list = [...json.data];
+    // 先把主评论单独拆出来，和回复分开
+    let mainList = json.data.filter(item => item.parent_id === 0);
+    // 按排序切换
     if (!sortNew) {
-      list = list.reverse();
+      mainList = mainList.reverse();
     }
     let html = "";
-    if (list.length === 0) {
+    if (mainList.length === 0) {
       html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
     } else {
-      list.forEach((item, index) => {
+      mainList.forEach((item, index) => {
         const floorNum = index + 1;
-        // 只渲染主评论 parent_id=0
-        if (item.parent_id !== 0) return;
         html += `
         <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -226,8 +226,8 @@ async function loadMessages() {
               <div style="color:#eee;line-height:1.7;">${item.content}</div>
             </div>
             <div style="display:flex;gap:8px;">
-              <button onclick="openReply(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
-              <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
+              <button onclick="openDelPwd(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
+              <button onclick="openDelPwd(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
             </div>
           </div>
           ${renderReplies(json.data, item.id)}
