@@ -145,14 +145,14 @@
 
   <h2 style="text-align:center;font-size:22px;color:#0099ff;margin:40px 0 20px;">全部留言</h2>
 <div style="display:flex;gap:10px;margin-bottom:20px;justify-content:center;">
-  <button id="sortNewFirst" style="padding:6px 10px;background:#444;color:#fff;border:none;border-radius:6px;cursor:pointer;">最新在前</button>
-<button id="sortOldFirst" style="padding:6px 10px;background:#444;color:#fff;border:none;border-radius:6px;cursor:pointer;">最早在前</button>
+  <button id="sortNewFirst" style="padding:6px 10px;background:#444;color:#fff;border:none;border-radius:6px;cursor:pointer;">最早在前</button>
+<button id="sortOldFirst" style="padding:6px 10px;background:#444;color:#fff;border:none;border-radius:6px;cursor:pointer;">最新在前</button>
 </div>
 <div id="messageList"></div>
 </div>
 
 <script>
-// 时区转换函数
+// 北京时间转换
 function utcStrToBeijing(utcStr) {
   const iso = utcStr.replace(" ", "T") + "Z";
   const d = new Date(iso);
@@ -169,14 +169,14 @@ function utcStrToBeijing(utcStr) {
   return new Intl.DateTimeFormat("zh-CN", formatOpt).format(d).replaceAll("/", "-");
 }
 
-// 全局变量
 let sortNew = true;
 let targetReplyId = 0;
+let waitDeleteId = 0;
 const API = "/api/messages";
 const tipText = document.getElementById("tipText");
 const listBox = document.getElementById("messageList");
 
-// 渲染子回复
+// 渲染回复
 function renderReplies(allData, parentId) {
   let replyHtml = "";
   const replies = allData.filter(item => item.parent_id === parentId);
@@ -190,21 +190,22 @@ function renderReplies(allData, parentId) {
       </div>
       <div style="color:#888;font-size:12px;margin-bottom:6px;">${utcStrToBeijing(reply.create_time)}</div>
       <div style="color:#eee;font-size:14px;">${reply.content}</div>
-      <button onclick="delMsg(${reply.id})" style="margin-top:8px;padding:4px 8px;background:#dc3545;color:#fff;border:none;border-radius:4px;font-size:12px;">删除回复</button>
+      <button onclick="openDelPwd(${reply.id})" style="margin-top:8px;padding:4px 8px;background:#dc3545;color:#fff;border:none;border-radius:4px;font-size:12px;">删除回复</button>
     </div>
     `;
   })
   return `<div style="margin-top:10px;">${replyHtml}</div>`;
 }
 
-// 加载评论列表
+// 加载评论
 async function loadMessages() {
   try {
     const res = await fetch(API);
     const json = await res.json();
-    // 先把主评论单独拆出来，和回复分开
-    let mainList = json.data.filter(item => item.parent_id === 0);
-    // 按排序切换
+    let allData = json.data;
+    // 筛选主楼
+    let mainList = allData.filter(item => item.parent_id === 0);
+    // 排序切换
     if (!sortNew) {
       mainList = mainList.reverse();
     }
@@ -212,25 +213,25 @@ async function loadMessages() {
     if (mainList.length === 0) {
       html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
     } else {
-      mainList.forEach((item, index) => {
-        const floorNum = index + 1;
+      mainList.forEach(item => {
+        const realFloor = item.id;
         html += `
         <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <div>
               <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
                 <span style="color:#0099ff;font-size:18px;">${item.nickname}</span>
-                <span style="color:#999;font-size:14px;">#${floorNum}楼</span>
+                <span style="color:#999;font-size:14px;">#${realFloor}楼</span>
               </div>
               <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
               <div style="color:#eee;line-height:1.7;">${item.content}</div>
             </div>
             <div style="display:flex;gap:8px;">
-              <button onclick="openDelPwd(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
+              <button onclick="openReply(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
               <button onclick="openDelPwd(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
             </div>
           </div>
-          ${renderReplies(json.data, item.id)}
+          ${renderReplies(allData, item.id)}
         </div>
         `;
       })
@@ -241,27 +242,49 @@ async function loadMessages() {
   }
 }
 
-// 主评论发布
+// 打开回复弹窗
+function openReply(floorId) {
+  targetReplyId = floorId;
+  const span = document.getElementById("replyFloorNum");
+  const box = document.getElementById("replyBox");
+  const check = document.getElementById("replyCheck");
+  const tip = document.getElementById("replyTip");
+  if(span) span.innerText = floorId;
+  if(box) box.style.display = "block";
+  if(check) check.checked = false;
+  if(tip) tip.innerText = "";
+}
+
+// 打开删除密码弹窗
+function openDelPwd(id) {
+  waitDeleteId = id;
+  const box = document.getElementById("delPwdBox");
+  const input = document.getElementById("delPwdInput");
+  if(box) box.style.display = "block";
+  if(input) input.value = "";
+}
+
+// 主评论提交
 document.getElementById("submitBtn").addEventListener("click", async () => {
   const checkBox = document.getElementById("humanCheck");
   if (!checkBox.checked) {
-    alert("请勾选「我不是机器人」后再发布！");
+    alert("请勾选「我不是机器人」");
     return;
   }
   const nickname = document.getElementById("nickname").value.trim();
   const content = document.getElementById("content").value.trim();
   if (!nickname || !content) {
-    tipText.innerText = "昵称和留言不能为空";
+    tipText.innerText = "昵称和内容不能为空";
     return;
   }
   tipText.innerText = "提交中...";
   try {
-    const resp = await fetch(API, {
+    const res = await fetch(API, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname, content, parent_id: 0 })
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({nickname, content, parent_id:0})
     });
-    const data = await resp.json();
+    const data = await res.json();
     tipText.innerText = data.msg;
     if (data.code === 200) {
       document.getElementById("nickname").value = "";
@@ -269,44 +292,20 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       checkBox.checked = false;
       loadMessages();
     }
-  } catch (err) {
-    tipText.innerText = "提交失败，请刷新页面重试";
+  } catch (e) {
+    tipText.innerText = "提交失败";
   }
 });
 
-// 打开回复弹窗
-function openReply(floorId) {
-  targetReplyId = floorId;
-  document.getElementById("replyFloorNum").innerText = floorId;
-  document.getElementById("replyBox").style.display = "block";
-  document.getElementById("replyTip").innerText = "";
-  document.getElementById("replyCheck").checked = false;
-}
+// 全局删除入口
+window.delMsg = openDelPwd;
 
-// 删除评论/回复
-window.delMsg = async function(id) {
-  const pwd = prompt("输入管理密码删除留言");
-  if (!pwd) return;
-  try {
-    const res = await fetch(API, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: id, adminPwd: pwd })
-    });
-    const data = await res.json();
-    alert(data.msg);
-    if (data.code === 200) loadMessages();
-  } catch (err) {
-    alert("删除请求失败");
-  }
-}
-
-// 页面加载完成后绑定按钮
+// 页面加载完成绑定按钮
 document.addEventListener("DOMContentLoaded", () => {
-  // 排序切换
+  // 排序按钮
   const btnNew = document.getElementById("sortNewFirst");
   const btnOld = document.getElementById("sortOldFirst");
-  function updateBtnStyle() {
+  function updateSortStyle() {
     if (sortNew) {
       btnNew.style.background = "#0066cc";
       btnOld.style.background = "#444";
@@ -315,65 +314,86 @@ document.addEventListener("DOMContentLoaded", () => {
       btnOld.style.background = "#0066cc";
     }
   }
-  updateBtnStyle();
+  updateSortStyle();
   btnNew.onclick = () => {
     sortNew = true;
-    updateBtnStyle();
+    updateSortStyle();
     loadMessages();
   };
   btnOld.onclick = () => {
     sortNew = false;
-    updateBtnStyle();
+    updateSortStyle();
     loadMessages();
   };
 
   // 关闭回复弹窗
-  document.getElementById("closeReply").addEventListener("click", () => {
+  document.getElementById("closeReply").onclick = () => {
     document.getElementById("replyBox").style.display = "none";
     document.getElementById("replyNick").value = "";
     document.getElementById("replyContent").value = "";
-  });
+  };
 
   // 提交回复
   document.getElementById("submitReply").addEventListener("click", async () => {
-    const checkBox = document.getElementById("replyCheck");
-    if (!checkBox.checked) {
-      alert("请勾选「我不是机器人」后再发布！");
+    const ck = document.getElementById("replyCheck");
+    if (!ck.checked) {
+      alert("请勾选「我不是机器人」");
       return;
     }
-    const nickname = document.getElementById("replyNick").value.trim();
-    const content = document.getElementById("replyContent").value.trim();
-    const replyTip = document.getElementById("replyTip");
-    if (!nickname || !content) {
-      replyTip.innerText = "昵称和回复内容不能为空";
+    const rn = document.getElementById("replyNick").value.trim();
+    const rc = document.getElementById("replyContent").value.trim();
+    const rt = document.getElementById("replyTip");
+    if (!rn || !rc) {
+      rt.innerText = "昵称和回复不能为空";
       return;
     }
-    replyTip.innerText = "提交中...";
+    rt.innerText = "提交中...";
     try {
       const res = await fetch(API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nickname: nickname,
-          content: content,
-          parent_id: targetReplyId
-        })
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({nickname:rn, content:rc, parent_id:targetReplyId})
       });
-      const data = await res.json();
-      replyTip.innerText = data.msg;
-      if (data.code === 200) {
+      const d = await res.json();
+      rt.innerText = d.msg;
+      if (d.code === 200) {
         document.getElementById("replyBox").style.display = "none";
         document.getElementById("replyNick").value = "";
         document.getElementById("replyContent").value = "";
         loadMessages();
       }
-    } catch (err) {
-      replyTip.innerText = "提交失败，请刷新重试";
+    } catch (e) {
+      rt.innerText = "提交失败";
     }
   });
+
+  // 删除弹窗按钮
+  document.getElementById("cancelDel").onclick = () => {
+    document.getElementById("delPwdBox").style.display = "none";
+  };
+  document.getElementById("confirmDel").onclick = async () => {
+    const pwd = document.getElementById("delPwdInput").value.trim();
+    if (!pwd) {
+      alert("请输入密码");
+      return;
+    }
+    try {
+      const res = await fetch(API, {
+        method: "DELETE",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({id: waitDeleteId, adminPwd: pwd})
+      });
+      const data = await res.json();
+      alert(data.msg);
+      document.getElementById("delPwdBox").style.display = "none";
+      if (data.code === 200) loadMessages();
+    } catch (e) {
+      alert("删除请求失败");
+    }
+  };
 });
 
-// 页面初始化加载一次评论
+// 页面初始化加载评论
 loadMessages();
 </script>
 </body>
