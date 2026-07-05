@@ -135,14 +135,8 @@
 </div>
 
 <script>
-  // 排序标记 true=最新在前 false=最早在前
-let sortNew = true;
-const API = "/api/messages";
-const tipText = document.getElementById("tipText");
-const listBox = document.getElementById("messageList");
-// D1 UTC时间字符串 → 标准北京时间（Asia/Shanghai）
+// 时区转换函数
 function utcStrToBeijing(utcStr) {
-  // 拼接成标准UTC ISO格式
   const iso = utcStr.replace(" ", "T") + "Z";
   const d = new Date(iso);
   const formatOpt = {
@@ -155,9 +149,38 @@ function utcStrToBeijing(utcStr) {
     second: "2-digit",
     hour12: false
   };
-  // 输出 2026-07-05 20:51:00 这种格式
-  return new Intl.DateTimeFormat("zh-CN", formatOpt).format(d).replace("/", "-").replace("/", "-").replace(" ", " ");
+  return new Intl.DateTimeFormat("zh-CN", formatOpt).format(d).replaceAll("/", "-");
 }
+
+// 全局变量
+let sortNew = true;
+let targetReplyId = 0;
+const API = "/api/messages";
+const tipText = document.getElementById("tipText");
+const listBox = document.getElementById("messageList");
+
+// 渲染子回复
+function renderReplies(allData, parentId) {
+  let replyHtml = "";
+  const replies = allData.filter(item => item.parent_id === parentId);
+  if (replies.length === 0) return "";
+  replies.forEach(reply => {
+    replyHtml += `
+    <div style="margin-top:12px;margin-left:30px;padding:12px;background:#2a2a2a;border-radius:8px;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
+        <span style="color:#6cf;font-size:16px;">${reply.nickname}</span>
+        <span style="color:#aaa;font-size:12px;">#${reply.id}楼回复</span>
+      </div>
+      <div style="color:#888;font-size:12px;margin-bottom:6px;">${utcStrToBeijing(reply.create_time)}</div>
+      <div style="color:#eee;font-size:14px;">${reply.content}</div>
+      <button onclick="delMsg(${reply.id})" style="margin-top:8px;padding:4px 8px;background:#dc3545;color:#fff;border:none;border-radius:4px;font-size:12px;">删除回复</button>
+    </div>
+    `;
+  })
+  return `<div style="margin-top:10px;">${replyHtml}</div>`;
+}
+
+// 加载评论列表
 async function loadMessages() {
   try {
     const res = await fetch(API);
@@ -170,19 +193,27 @@ async function loadMessages() {
     if (list.length === 0) {
       html = "<p style='text-align:center;color:#aaa;'>暂无留言，快来发布第一条吧</p>";
     } else {
-      list.forEach((item) => {
-        const floorNum = item.id;
+      list.forEach((item, index) => {
+        const floorNum = index + 1;
+        // 只渲染主评论 parent_id=0
+        if (item.parent_id !== 0) return;
         html += `
-        <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;">
-          <div>
-            <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
-              <span style="color:#0099ff;font-size:18px;">${item.nickname}</span>
-              <span style="color:#999;font-size:14px;">#${floorNum}楼</span>
+        <div style="background:#1a1d25;padding:20px;border-radius:12px;margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+                <span style="color:#0099ff;font-size:18px;">${item.nickname}</span>
+                <span style="color:#999;font-size:14px;">#${floorNum}楼</span>
+              </div>
+              <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
+              <div style="color:#eee;line-height:1.7;">${item.content}</div>
             </div>
-            <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
-            <div style="color:#eee;line-height:1.7;">${item.content}</div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="openReply(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
+              <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
+            </div>
           </div>
-          <button onclick="delMsg(${item.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:6px;cursor:pointer;">删除</button>
+          ${renderReplies(json.data, item.id)}
         </div>
         `;
       })
@@ -192,12 +223,9 @@ async function loadMessages() {
     listBox.innerHTML = "<p style='text-align:center;color:#f66;'>留言加载失败</p>";
   }
 }
-loadMessages();
 
-// 发布留言
+// 主评论发布
 document.getElementById("submitBtn").addEventListener("click", async () => {
-  
-   // 1. 判断是否勾选
   const checkBox = document.getElementById("humanCheck");
   if (!checkBox.checked) {
     alert("请勾选「我不是机器人」后再发布！");
@@ -206,7 +234,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   const nickname = document.getElementById("nickname").value.trim();
   const content = document.getElementById("content").value.trim();
   if (!nickname || !content) {
-    tipText.innerText = "请填写昵称和留言内容";
+    tipText.innerText = "昵称和留言不能为空";
     return;
   }
   tipText.innerText = "提交中...";
@@ -214,22 +242,31 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     const resp = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname, content })
+      body: JSON.stringify({ nickname, content, parent_id: 0 })
     });
     const data = await resp.json();
     tipText.innerText = data.msg;
     if (data.code === 200) {
       document.getElementById("nickname").value = "";
       document.getElementById("content").value = "";
-      checkBox.checked = false; // 发布成功取消勾选
+      checkBox.checked = false;
       loadMessages();
     }
   } catch (err) {
-    tipText.innerText = "提交失败，请刷新重试";
+    tipText.innerText = "提交失败，请刷新页面重试";
   }
 });
 
-// 删除留言
+// 打开回复弹窗
+function openReply(floorId) {
+  targetReplyId = floorId;
+  document.getElementById("replyFloorNum").innerText = floorId;
+  document.getElementById("replyBox").style.display = "block";
+  document.getElementById("replyTip").innerText = "";
+  document.getElementById("replyCheck").checked = false;
+}
+
+// 删除评论/回复
 window.delMsg = async function(id) {
   const pwd = prompt("输入管理密码删除留言");
   if (!pwd) return;
@@ -246,11 +283,12 @@ window.delMsg = async function(id) {
     alert("删除请求失败");
   }
 }
-// 排序切换按钮 等页面全部渲染完再绑定
-document.addEventListener("DOMContentLoaded", function () {
+
+// 页面加载完成后绑定按钮
+document.addEventListener("DOMContentLoaded", () => {
+  // 排序切换
   const btnNew = document.getElementById("sortNewFirst");
   const btnOld = document.getElementById("sortOldFirst");
-
   function updateBtnStyle() {
     if (sortNew) {
       btnNew.style.background = "#0066cc";
@@ -260,21 +298,66 @@ document.addEventListener("DOMContentLoaded", function () {
       btnOld.style.background = "#0066cc";
     }
   }
-
-  // 初始化页面时设置一次样式
   updateBtnStyle();
-
-  btnNew.addEventListener("click", () => {
+  btnNew.onclick = () => {
     sortNew = true;
     updateBtnStyle();
     loadMessages();
-  });
-  btnOld.addEventListener("click", () => {
+  };
+  btnOld.onclick = () => {
     sortNew = false;
     updateBtnStyle();
     loadMessages();
+  };
+
+  // 关闭回复弹窗
+  document.getElementById("closeReply").addEventListener("click", () => {
+    document.getElementById("replyBox").style.display = "none";
+    document.getElementById("replyNick").value = "";
+    document.getElementById("replyContent").value = "";
+  });
+
+  // 提交回复
+  document.getElementById("submitReply").addEventListener("click", async () => {
+    const checkBox = document.getElementById("replyCheck");
+    if (!checkBox.checked) {
+      alert("请勾选「我不是机器人」后再发布！");
+      return;
+    }
+    const nickname = document.getElementById("replyNick").value.trim();
+    const content = document.getElementById("replyContent").value.trim();
+    const replyTip = document.getElementById("replyTip");
+    if (!nickname || !content) {
+      replyTip.innerText = "昵称和回复内容不能为空";
+      return;
+    }
+    replyTip.innerText = "提交中...";
+    try {
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nickname: nickname,
+          content: content,
+          parent_id: targetReplyId
+        })
+      });
+      const data = await res.json();
+      replyTip.innerText = data.msg;
+      if (data.code === 200) {
+        document.getElementById("replyBox").style.display = "none";
+        document.getElementById("replyNick").value = "";
+        document.getElementById("replyContent").value = "";
+        loadMessages();
+      }
+    } catch (err) {
+      replyTip.innerText = "提交失败，请刷新重试";
+    }
   });
 });
+
+// 页面初始化加载一次评论
+loadMessages();
 </script>
 </body>
 </html>
