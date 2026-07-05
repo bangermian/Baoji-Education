@@ -125,6 +125,23 @@
     <p id="tipText" style="margin:12px 0;color:#aaa;"></p>
     <button id="submitBtn" style="width:100%;padding:13px;background:#0066cc;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;">发布留言</button>
   </div>
+  <!-- 回复弹窗 完整代码，里面自带 <span id="replyFloorNum"></span> -->
+<div id="replyBox" style="display:none;background:#222;padding:16px;border-radius:10px;margin-bottom:20px;">
+  <h4 style="color:#fff;margin:0 0 10px;">回复 #<span id="replyFloorNum"></span>楼</h4>
+  <input id="replyNick" type="text" placeholder="输入昵称" style="width:100%;padding:10px;margin-bottom:10px;background:#333;border:none;color:#fff;border-radius:6px;">
+  <textarea id="replyContent" rows="3" placeholder="写下回复内容" style="width:100%;padding:10px;margin-bottom:10px;background:#333;border:none;color:#fff;border-radius:6px;"></textarea>
+
+  <div style="margin:8px 0;display:flex;align-items:center;gap:6px;">
+    <input type="checkbox" id="replyCheck">
+    <label style="color:#ccc;cursor:pointer;">我不是机器人</label>
+  </div>
+
+  <p id="replyTip" style="margin:8px 0;color:#aaa;"></p>
+  <div style="display:flex;gap:10px;">
+    <button id="submitReply" style="flex:1;padding:8px;background:#0066cc;color:#fff;border:none;border-radius:6px;">提交回复</button>
+    <button id="closeReply" style="flex:1;padding:8px;background:#555;color:#fff;border:none;border-radius:6px;">取消</button>
+  </div>
+</div>
 
   <h2 style="text-align:center;font-size:22px;color:#0099ff;margin:40px 0 20px;">全部留言</h2>
 <div style="display:flex;gap:10px;margin-bottom:20px;justify-content:center;">
