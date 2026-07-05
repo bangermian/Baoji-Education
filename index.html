@@ -249,13 +249,15 @@ window.delMsg = async function(id) {
   }
 }
 // 排序切换按钮
-document.getElementById("sortNewFirst").addEventListener("click", () => {
-  sortNew = true;
-  loadMessages();
-});
-document.getElementById("sortOldFirst").addEventListener("click", () => {
-  sortNew = false;
-  loadMessages();
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("sortNewFirst").addEventListener("click", () => {
+    sortNew = true;
+    loadMessages();
+  });
+  document.getElementById("sortOldFirst").addEventListener("click", () => {
+    sortNew = false;
+    loadMessages();
+  });
 });
 </script>
 </body>
