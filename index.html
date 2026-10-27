@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="favicon.ico?v=2" type="image/x-icon">
-    <title>豹鸡教育</title>
+    <title>豹鸡教育 · 一万豹鸡，助您NB</title>
+<meta name="description" content="豹鸡教育：高考志愿填报、保研考公考编、出国留学咨询，旗下 Team jageon 制作 galgame 与科技产品。">
+<meta name="theme-color" content="#0066cc">
+<link rel="canonical" href="https://baojijiaoyu86.top/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="豹鸡教育">
+<meta property="og:title" content="豹鸡教育 · 一万豹鸡，助您NB">
+<meta property="og:description" content="豹鸡教育：高考志愿填报、保研考公考编、出国留学咨询，旗下 Team jageon 制作 galgame 与科技产品。">
+<meta property="og:url" content="https://baojijiaoyu86.top/">
+<meta property="og:image" content="https://baojijiaoyu86.top/img/logo.jpg">
     <style>
         /* 全局样式重置 */
         * {
@@ -34,8 +43,9 @@
 
         /* Logo */
         .logo img {
-            height: 200px; /* 您可以根据实际logo大小调整 */
+            height: 56px;
             width: auto;
+            display: block;
         }
 
         /* 导航菜单 */
@@ -53,7 +63,17 @@
         }
 
         nav a:hover {
-            color: #007bff; /* 悬停颜色，可根据您的品牌色调整 */
+            color: #007bff;
+        }
+
+        /* 移动端：缩小 logo、压缩导航间距，避免挤出屏幕 */
+        @media (max-width: 760px) {
+            header { padding: .6rem 4%; }
+            .nav-container { flex-wrap: wrap; gap: .5rem; }
+            .logo img { height: 40px; }
+            nav ul { gap: 1rem; flex-wrap: wrap; justify-content: flex-end; }
+            nav a { font-size: 14px; }
+            main { margin: 1.2rem auto; }
         }
 
         /* 主内容区 */
@@ -72,6 +92,20 @@
         p {
             color: #666;
             line-height: 1.6;
+        }
+        /* 留言板块容器：与主内容同宽居中（原来贴到屏幕最左边） */
+        .container {
+            max-width: 880px;
+            margin: 0 auto 3rem;
+            padding: 0 5%;
+        }
+        .section-title {
+            text-align: center;
+            margin: 2.4rem 0 1.2rem;
+        }
+        .section-title h2 {
+            font-size: 22px;
+            color: #0099ff;
         }
     </style>
 </head>
@@ -184,6 +218,16 @@ const API = "/api/messages";
 const tipText = document.getElementById("tipText");
 const listBox = document.getElementById("messageList");
 
+// 所有用户输入一律转义后再拼进 HTML，防止留言被注入脚本
+function esc(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // 渲染回复
 function renderReplies(allData, parentId) {
   let replyHtml = "";
@@ -193,11 +237,11 @@ function renderReplies(allData, parentId) {
     replyHtml += `
     <div style="margin-top:12px;margin-left:30px;padding:12px;background:#2a2a2a;border-radius:8px;">
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
-        <span style="color:#6cf;font-size:16px;">${reply.nickname}</span>
+        <span style="color:#6cf;font-size:16px;">${esc(reply.nickname)}</span>
         <span style="color:#aaa;font-size:12px;">#${reply.id}楼回复</span>
       </div>
       <div style="color:#888;font-size:12px;margin-bottom:6px;">${utcStrToBeijing(reply.create_time)}</div>
-      <div style="color:#eee;font-size:14px;">${reply.content}</div>
+      <div style="color:#eee;font-size:14px;">${esc(reply.content)}</div>
       <button onclick="openDelPwd(${reply.id})" style="margin-top:8px;padding:4px 8px;background:#dc3545;color:#fff;border:none;border-radius:4px;font-size:12px;">删除回复</button>
     </div>
     `;
@@ -228,11 +272,11 @@ async function loadMessages() {
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <div>
               <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
-                <span style="color:#0099ff;font-size:18px;">${item.nickname}</span>
+                <span style="color:#0099ff;font-size:18px;">${esc(item.nickname)}</span>
                 <span style="color:#999;font-size:14px;">#${realFloor}楼</span>
               </div>
               <div style="color:#888;font-size:13px;margin-bottom:10px;">${utcStrToBeijing(item.create_time)}</div>
-              <div style="color:#eee;line-height:1.7;">${item.content}</div>
+              <div style="color:#eee;line-height:1.7;">${esc(item.content)}</div>
             </div>
             <div style="display:flex;gap:8px;">
               <button onclick="openReply(${item.id})" style="padding:6px 10px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;">回复</button>
@@ -404,5 +448,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // 页面初始化加载评论
 loadMessages();
 </script>
+
+<!-- 公共脚本：图片兜底 + 小鱼陪聊 -->
+<script src="assets/app.js" defer></script>
 </body>
 </html>
