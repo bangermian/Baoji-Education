@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="小鱼开心">
+  <defs>
+    <linearGradient id="xyBody2" x1="0.2" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#FBFDFF"/>
+      <stop offset="1" stop-color="#CFE6FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 尾巴 -->
+  <path d="M32 57 L12 39 C9 36 5.5 39 6.5 43 L10.5 57 L6.5 71 C5.5 75 9 78 12 75 L32 57 Z" fill="#9CCBFF"/>
+
+  <!-- 背鳍 / 腹鳍 -->
+  <path d="M52 32 C54 20 60 15 66 17.5 C61 24 60.5 29 63 32 Z" fill="#9CCBFF"/>
+  <path d="M57 80 C59 89 63 93.5 68 91.5 C64 86.5 63 82.5 63 80 Z" fill="#9CCBFF"/>
+
+  <!-- 身体 -->
+  <ellipse cx="62" cy="55" rx="33" ry="25.5" fill="url(#xyBody2)" stroke="#B9D6F2" stroke-width="1.4"/>
+
+  <!-- 豹纹斑点 -->
+  <circle cx="46" cy="44" r="5.4" fill="#ED7D31"/>
+  <circle cx="61" cy="37" r="4.4" fill="#ED7D31"/>
+  <circle cx="69" cy="48" r="3.6" fill="#ED7D31"/>
+  <circle cx="54" cy="53" r="3" fill="#ED7D31" opacity="0.9"/>
+
+  <!-- 眯眼笑 -->
+  <path d="M72.5 56 q5.5 -7.5 11 0" stroke="#14314D" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+
+  <!-- 小嘴 + 腮红 -->
+  <path d="M73 64 q5.5 5 10.5 0.5" stroke="#14314D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="71" cy="66" rx="5" ry="3" fill="#FFB3A7" opacity="0.8"/>
+
+  <!-- 客服耳机 -->
+  <path d="M58 31 C66 24.5 80 27 86 37" stroke="#14314D" stroke-width="2.9" fill="none" stroke-linecap="round"/>
+  <circle cx="87.5" cy="41" r="3.4" fill="#14314D"/>
+  <circle cx="88.1" cy="40.2" r="1.3" fill="#35D0FF"/>
+
+  <!-- 小水花 -->
+  <circle cx="24" cy="26" r="3" fill="#9CCBFF" opacity="0.8"/>
+  <circle cx="33" cy="16" r="2" fill="#9CCBFF" opacity="0.6"/>
+</svg>

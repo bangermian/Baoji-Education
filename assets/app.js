@@ -83,18 +83,22 @@
     function buildWidget() {
         if (document.getElementById('xy-fab')) return;
 
+        var iconURL = new URL('xiaoyu.svg', baseDir).href;
+        var offlineURL = new URL('xiaoyu-offline.svg', baseDir).href;
+
         var fab = document.createElement('button');
         fab.id = 'xy-fab';
         fab.type = 'button';
         fab.setAttribute('aria-label', '打开' + CONFIG.name + '聊天窗口');
-        fab.textContent = '🐟 ' + CONFIG.name;
+        fab.innerHTML = '<img class="xy-ico" src="' + iconURL + '" alt="">' +
+            '<span>' + CONFIG.name + '</span>';
 
         var panel = document.createElement('section');
         panel.id = 'xy-panel';
         panel.setAttribute('aria-live', 'polite');
         panel.innerHTML =
             '<div id="xy-head">' +
-                '<div id="xy-avatar">🐟</div>' +
+                '<div id="xy-avatar"><img src="' + iconURL + '" alt=""></div>' +
                 '<div id="xy-head-info"><strong>' + CONFIG.name + '</strong>' +
                 '<small>' + CONFIG.subtitle + '</small></div>' +
                 '<button id="xy-close" type="button" aria-label="关闭">×</button>' +
@@ -118,11 +122,18 @@
             msgs.scrollTop = msgs.scrollHeight;
         }
 
-        function addBubble(role, text) {
+        function addBubble(role, text, icon) {
             var div = document.createElement('div');
             div.className = 'xy-msg ' +
                 (role === 'user' ? 'xy-me' : role === 'assistant' ? 'xy-bot' : 'xy-sys');
-            div.textContent = text;          // 一律用 textContent，避免注入
+            if (icon) {
+                var img = document.createElement('img');
+                img.className = 'xy-sys-ico';
+                img.src = icon;
+                img.alt = '';
+                div.appendChild(img);
+            }
+            div.appendChild(document.createTextNode(text));   // 一律文本节点，避免注入
             msgs.appendChild(div);
             scrollDown();
             return div;
@@ -200,11 +211,11 @@
                 } else if (data && data.error === 'busy') {
                     addBubble('sys', '小鱼现在有点忙，稍等一下下～');
                 } else {
-                    addBubble('sys', CONFIG.offlineTip);
+                    addBubble('sys', CONFIG.offlineTip, offlineURL);
                 }
             }).catch(function () {
                 typing.remove();
-                addBubble('sys', CONFIG.offlineTip);
+                addBubble('sys', CONFIG.offlineTip, offlineURL);
             }).then(function () {
                 sending = false;
                 sendBtn.disabled = false;

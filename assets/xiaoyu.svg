@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="小鱼">
+  <defs>
+    <linearGradient id="xyBody" x1="0.2" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#FBFDFF"/>
+      <stop offset="1" stop-color="#CFE6FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 尾巴 -->
+  <path d="M32 60 L12 42 C9 39 5.5 42 6.5 46 L10.5 60 L6.5 74 C5.5 78 9 81 12 78 L32 60 Z" fill="#9CCBFF"/>
+
+  <!-- 背鳍 / 腹鳍 -->
+  <path d="M52 35 C54 23 60 18 66 20.5 C61 27 60.5 32 63 35 Z" fill="#9CCBFF"/>
+  <path d="M57 83 C59 92 63 96.5 68 94.5 C64 89.5 63 85.5 63 83 Z" fill="#9CCBFF"/>
+
+  <!-- 身体 -->
+  <ellipse cx="62" cy="58" rx="33" ry="25.5" fill="url(#xyBody)" stroke="#B9D6F2" stroke-width="1.4"/>
+
+  <!-- 豹纹斑点 -->
+  <circle cx="46" cy="47" r="5.4" fill="#ED7D31"/>
+  <circle cx="61" cy="40" r="4.4" fill="#ED7D31"/>
+  <circle cx="69" cy="51" r="3.6" fill="#ED7D31"/>
+  <circle cx="54" cy="56" r="3" fill="#ED7D31" opacity="0.9"/>
+
+  <!-- 眼睛 -->
+  <circle cx="78" cy="58" r="6" fill="#14314D"/>
+  <circle cx="80.4" cy="55.6" r="2" fill="#ffffff"/>
+
+  <!-- 客服耳机：短弧跨过头顶 + 耳罩缀在头侧 -->
+  <path d="M58 34 C66 27.5 80 30 86 40" stroke="#14314D" stroke-width="2.9" fill="none" stroke-linecap="round"/>
+  <circle cx="87.5" cy="44" r="3.4" fill="#14314D"/>
+  <circle cx="88.1" cy="43.2" r="1.3" fill="#35D0FF"/>
+</svg>

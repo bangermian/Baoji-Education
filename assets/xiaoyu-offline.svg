@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="小鱼掉线">
+  <defs>
+    <linearGradient id="xyBody3" x1="0.2" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#F7FAFD"/>
+      <stop offset="1" stop-color="#DCE6F1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 翻白肚：整条鱼倒过来 -->
+  <g transform="rotate(180 60 60)">
+    <path d="M32 60 L12 42 C9 39 5.5 42 6.5 46 L10.5 60 L6.5 74 C5.5 78 9 81 12 78 L32 60 Z" fill="#C3D6E8"/>
+
+    <path d="M52 35 C54 23 60 18 66 20.5 C61 27 60.5 32 63 35 Z" fill="#C3D6E8"/>
+    <path d="M57 83 C59 92 63 96.5 68 94.5 C64 89.5 63 85.5 63 83 Z" fill="#C3D6E8"/>
+
+    <ellipse cx="62" cy="58" rx="33" ry="25.5" fill="url(#xyBody3)" stroke="#C3D6E8" stroke-width="1.4"/>
+
+    <!-- 斑点褪色 -->
+    <circle cx="48" cy="46" r="5.6" fill="#ED7D31" opacity="0.42"/>
+    <circle cx="64" cy="41" r="4.6" fill="#ED7D31" opacity="0.42"/>
+    <circle cx="73" cy="50" r="4" fill="#ED7D31" opacity="0.42"/>
+    <circle cx="56" cy="55" r="3.2" fill="#ED7D31" opacity="0.32"/>
+
+    <!-- × 眼 -->
+    <g stroke="#14314D" stroke-width="2.8" stroke-linecap="round">
+      <path d="M73 51 L81 59"/>
+      <path d="M81 51 L73 59"/>
+    </g>
+
+    <!-- 小嘴 -->
+    <ellipse cx="80" cy="66" rx="2.6" ry="2" fill="#14314D" opacity="0.75"/>
+
+    <!-- 耳机（灯灭了） -->
+    <path d="M58 34 C66 27.5 80 30 86 40" stroke="#14314D" stroke-width="2.9" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <circle cx="87.5" cy="44" r="3.4" fill="#14314D" opacity="0.7"/>
+    <circle cx="88.1" cy="43.2" r="1.3" fill="#9AA7B4"/>
+  </g>
+
+  <!-- 泡泡 -->
+  <circle cx="26" cy="22" r="3.4" fill="#BFE3FF" opacity="0.85"/>
+  <circle cx="35" cy="12" r="2.2" fill="#BFE3FF" opacity="0.65"/>
+  <circle cx="20" cy="10" r="1.6" fill="#BFE3FF" opacity="0.5"/>
+</svg>
