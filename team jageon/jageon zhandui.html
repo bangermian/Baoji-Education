@@ -164,6 +164,17 @@
         grid-template-columns: repeat(1, 1fr);
         }
         }
+
+        /* 手机端：横幅别把标题挤成三行 */
+        @media (max-width: 720px) {
+            .banner { width: 92%; height: 46vh; }
+            .banner h1 { font-size: 30px; letter-spacing: 3px; }
+            .banner p { font-size: 15px; }
+            .switch-btn { right: 14px; top: 14px; padding: 8px 14px; font-size: 13px; }
+            .back-home { margin: 14px 14px; font-size: 14px; }
+            .container { padding: 40px 16px; }
+            .intro-box { padding: 22px; }
+        }
     </style>
 </head>
 <body>
