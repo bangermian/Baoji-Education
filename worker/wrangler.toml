@@ -14,9 +14,7 @@ MODEL = "deepseek-chat"
 DAILY_LIMIT = "400"
 RATE_LIMIT = "20"
 
-# 可选：按 IP 限流（强烈建议开启）
-# 先执行：wrangler kv namespace create CHAT_KV
-# 再把返回的 id 填进来，并取消下面三行注释
-# [[kv_namespaces]]
-# binding = "CHAT_KV"
-# id = "把 kv namespace 的 id 填这里"
+# 按 IP 限流 + 全站每日总额（KV 已于 2026-10-28 创建）
+[[kv_namespaces]]
+binding = "CHAT_KV"
+id = "d185d47812b841c68f85c27fdbb398e7"
