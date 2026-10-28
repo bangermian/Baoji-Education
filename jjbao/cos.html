@@ -106,6 +106,27 @@
 .back-home:hover {
     text-decoration: underline;
 }
+        /* 档案列表 */
+        .facts {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 10px 16px;
+            margin: 4px 0 20px;
+        }
+        .facts li {
+            font-size: 15px;
+            color: #555;
+            background: #f7f9fc;
+            padding: 10px 14px;
+            border-radius: 10px;
+        }
+        .facts li span {
+            color: #8a94a6;
+            font-size: 13px;
+            margin-right: 10px;
+        }
+
         /* 三态形象 */
         .img-row {
             display: flex;
@@ -201,6 +222,22 @@
         <div class="line"></div>
 
         <div class="content">
+            <h3>档案</h3>
+            <ul class="facts">
+                <li><span>生日</span>6 月 28 日（和网站同一天）</li>
+                <li><span>星座</span>巨蟹座</li>
+                <li><span>年龄</span>20 岁（自称）</li>
+                <li><span>身高 / 体重</span>165 cm / 50 kg</li>
+                <li><span>MBTI</span>INTP（没测过，纯自信）</li>
+                <li><span>口头禅</span>行吧 / 这有什么难的 / 先喝口水</li>
+            </ul>
+            <p>性格：懒散但靠谱，嘴上爱吐槽、手上不含糊；怕麻烦，可一见到 bug 又忍不住去修。被夸会嘴硬一句"哪有"，对熟人话痨，对生人先观察三句。</p>
+            <p>喜欢冰美式、深夜改 CSS、豹纹、被人认真提问；讨厌错别字、502、被喊"客服小姐"，以及有人说"你只是条鱼"。</p>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="content">
             <h3>我的三个状态</h3>
             <div class="img-row">
                 <figure>
@@ -219,8 +256,8 @@
             <p>点右下角那个蓝色按钮就能找我聊天。哪天我翻白肚了，说明 Worker 又没电了，踹一脚站长就行。</p>
         </div>
 
-        <a href="about.html" class="next-btn">下一页 →</a>
         <a href="about4.html" class="prev-btn">← 上一页</a>
+        <a href="about.html" class="next-btn">下一页 →</a>
     </div>
     <script src="../assets/app.js" defer></script>
 </body>
