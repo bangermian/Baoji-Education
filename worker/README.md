@@ -2,11 +2,22 @@
 
 网站上右下角的「🐟 小鱼」聊天球，前端在 `../assets/app.js`，后端就是这里的 `index.js`。
 
+## 当前部署状态（2026-10-28 已上线）
+
+| 项 | 值 |
+|---|---|
+| Worker 名 | `baoji-chat`（账号 zhouyuhan20） |
+| 路由 | `baojijiaoyu86.top/api/chat` |
+| KV 命名空间 | `CHAT_KV` = `d185d47812b841c68f85c27fdbb398e7` |
+| 密钥名 | `DS_API_KEY`（代码同时认 `DEEPSEEK_API_KEY` / `DEEPSEEK_KEY`） |
+| 重新部署 | `cd worker && npx wrangler deploy` |
+| 查看日志 | `npx wrangler tail` |
+
 ## 它是怎么跑的
 
 ```
 浏览器 ──POST /api/chat──> Worker ──> DeepSeek API
-                              ↑ DEEPSEEK_API_KEY 存在 Worker 的 Secret 里
+                              ↑ 密钥存在 Worker 的 Secret 里
 ```
 
 前端只发 `{ messages: [...] }`，Worker 拿固定的系统提示词（人设）拼上下文去调 DeepSeek，

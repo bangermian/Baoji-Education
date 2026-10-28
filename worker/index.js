@@ -103,7 +103,9 @@ export default {
         if (request.method !== "POST") {
             return json({ error: "bad_request" }, 405);
         }
-        if (!env.DEEPSEEK_API_KEY) {
+        // 密钥名容错：面板里填成 DEEPSEEK_API_KEY 或 DS_API_KEY 都能用
+        const apiKey = env.DEEPSEEK_API_KEY || env.DS_API_KEY || env.DEEPSEEK_KEY;
+        if (!apiKey) {
             return json({ error: "no_key" }, 500);
         }
 
@@ -138,7 +140,7 @@ export default {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
+                    Authorization: `Bearer ${apiKey}`,
                 },
                 body: JSON.stringify(payload),
                 signal: controller.signal,
