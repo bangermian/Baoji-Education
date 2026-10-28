@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" width="240" height="320" role="img" aria-label="Cos 头像">
+  <defs>
+    <linearGradient id="cosBg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#EEF6FF"/>
+      <stop offset="1" stop-color="#D6E8FF"/>
+    </linearGradient>
+    <linearGradient id="cosSkin" x1="0.3" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#FCE6D6"/>
+      <stop offset="1" stop-color="#F2CBB4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="240" height="320" fill="url(#cosBg)"/>
+  <circle cx="120" cy="130" r="84" fill="#E4F1FF"/>
+
+  <!-- 后层头发 -->
+  <ellipse cx="120" cy="136" rx="60" ry="66" fill="#182740"/>
+  <!-- 侧边发束 -->
+  <path d="M60 138 C56 180 60 200 70 212 C80 200 78 168 78 148 Z" fill="#182740"/>
+  <path d="M180 138 C184 180 180 200 170 212 C160 200 162 168 162 148 Z" fill="#182740"/>
+
+  <!-- 肩膀与衣服 -->
+  <path d="M26 320 C30 266 72 240 120 240 C168 240 210 266 214 320 Z" fill="#FFFFFF"/>
+  <path d="M104 242 L84 320 L62 320 C64 284 80 258 104 242 Z" fill="#1E3A5F"/>
+  <path d="M136 242 L156 320 L178 320 C176 284 160 258 136 242 Z" fill="#1E3A5F"/>
+  <path d="M106 242 L120 276 L134 242 L126 238 L120 256 L114 238 Z" fill="#EDF4FC"/>
+
+  <!-- 脖子 -->
+  <path d="M108 196 L132 196 L132 246 L108 246 Z" fill="#F2CBB4"/>
+  <path d="M108 208 C114 226 126 226 132 208 L132 196 L108 196 Z" fill="#E3B096" opacity="0.75"/>
+
+  <!-- 脸 -->
+  <ellipse cx="120" cy="158" rx="44" ry="50" fill="url(#cosSkin)"/>
+
+  <!-- 耳朵 -->
+  <ellipse cx="78" cy="160" rx="6" ry="9" fill="#F2CBB4"/>
+  <ellipse cx="162" cy="160" rx="6" ry="9" fill="#F2CBB4"/>
+
+  <!-- 刘海：偏分，右侧长一点 -->
+  <path d="M76 142 C80 106 100 90 122 90 C148 90 166 108 168 144 C160 122 148 112 130 112 C114 112 100 122 92 140 C86 154 82 152 76 142 Z" fill="#182740"/>
+  <path d="M122 90 C148 90 166 108 168 144 C162 126 152 116 136 118 C124 120 116 128 110 140 C116 116 118 96 122 90 Z" fill="#23324F"/>
+
+  <!-- 发夹：橙底豹纹 -->
+  <g transform="rotate(-18 92 118)">
+    <rect x="80" y="112" width="23" height="10" rx="5" fill="#ED7D31"/>
+    <circle cx="86" cy="117" r="1.7" fill="#B85C1E"/>
+    <circle cx="94" cy="117" r="1.7" fill="#B85C1E"/>
+  </g>
+
+  <!-- 眉毛（细一点，别凶） -->
+  <path d="M94 152 q 11 -4 21 0" stroke="#182740" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <path d="M125 152 q 11 -4 21 0" stroke="#182740" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+  <!-- 半睁眼 -->
+  <path d="M94 166 q 10.5 -6 21 0" stroke="#182740" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <path d="M125 166 q 10.5 -6 21 0" stroke="#182740" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <circle cx="104.5" cy="170" r="3.9" fill="#2C4E7A"/>
+  <circle cx="135.5" cy="170" r="3.9" fill="#2C4E7A"/>
+  <circle cx="105.8" cy="168.6" r="1.3" fill="#FFFFFF"/>
+  <circle cx="136.8" cy="168.6" r="1.3" fill="#FFFFFF"/>
+
+  <!-- 鼻子 / 嘴 -->
+  <path d="M119 178 l 2.5 6" stroke="#DCA98E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M113 195 q 7 5 14 0" stroke="#C4705F" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <ellipse cx="92" cy="186" rx="7.5" ry="4.2" fill="#FFC2B6" opacity="0.5"/>
+  <ellipse cx="148" cy="186" rx="7.5" ry="4.2" fill="#FFC2B6" opacity="0.5"/>
+
+  <!-- 挂在脖子上的头戴耳机 -->
+  <path d="M84 248 C92 268 148 268 156 248" stroke="#1E3A5F" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+  <circle cx="80" cy="248" r="10" fill="#1E3A5F"/>
+  <circle cx="160" cy="248" r="10" fill="#1E3A5F"/>
+  <circle cx="160" cy="246" r="2.8" fill="#35D0FF"/>
+
+  <!-- 耳机线（鱼线）+ 小鱼钩 -->
+  <path d="M164 257 C 176 284 156 298 142 306" stroke="#9CCBFF" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M142 306 q -9 7 -6 14" stroke="#9CCBFF" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <circle cx="136" cy="320" r="2.6" fill="#ED7D31"/>
+</svg>
