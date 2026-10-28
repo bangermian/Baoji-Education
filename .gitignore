@@ -1,0 +1,9 @@
+﻿# 部署工具的本地缓存，不要进仓库
+worker/.wrangler/
+node_modules/
+.wrangler/
+
+# 系统 / 编辑器文件
+.DS_Store
+Thumbs.db
+*.log
