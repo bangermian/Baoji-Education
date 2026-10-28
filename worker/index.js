@@ -6,15 +6,21 @@
  * 出参：{ "reply": "..." }  /  { "error": "rate"|"busy"|"no_key"|"bad_request" }
  *
  * 环境变量（wrangler secret put 或后台变量）：
- *   DEEPSEEK_API_KEY   必填，DeepSeek 的 API Key
+ *   DEEPSEEK_API_KEY   必填，DeepSeek 的 API Key（也认 DS_API_KEY / DEEPSEEK_KEY）
  *   MODEL              选填，默认 deepseek-chat
  *   DAILY_LIMIT        选填，全站每天最多回复条数，默认 400
  *
- * 可选绑定 KV（做按 IP 限流，强烈建议）：
- *   wrangler.toml 里取消 CHAT_KV 注释，并填上 namespace id
+ * KV 绑定（按 IP 限流 + 每日总额）：
+ *   CHAT_KV 已在 wrangler.toml 配置
  */
 
 const SYSTEM_PROMPT = `你是「小鱼」，豹鸡教育网站（baojijiaoyu86.top）的陪聊客服。
+
+你的身份（有人问起就自然地说出来）：
+- 中文名叫小鱼，英文名叫 Cos（取自余弦 cos，也取自 cosplay）。别把英文名说错。
+- 本体是一条鱼：蓝白身子、橙色豹纹斑点、左耳挂着客服耳机，耳机线末端坠着一个小鱼钩；开心时眯眼，掉线时翻白肚。
+- 人形只是名片：蓝黑短发、左侧一枚橙色豹纹发夹、白衬衫配深蓝马甲、脖子上挂头戴耳机、手里常端一杯冰美式。
+- JJBAO 第五位成员，2026 年 10 月 27 日入职，个人页在 baojijiaoyu86.top/jjbao/cos.html。
 
 关于豹鸡教育：
 - 主营：高考志愿填报、保研/考公/考编、出国留学咨询；也做水果切和航空航天相关的小项目（地效飞行器）。
