@@ -1,0 +1,214 @@
+/* 说明页排版（与 style.css 共用变量，跟随同一套浅色主题） */
+
+body.doc {
+  display: block;
+  overflow: auto;
+  grid-template-rows: none;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 13px;
+  padding: 0 0 60px;
+}
+
+.doc-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 42px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.doc-header .logo::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: var(--up);
+}
+
+.doc-header a {
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 12px;
+  border: 1px solid var(--border-strong);
+  padding: 3px 10px;
+  border-radius: var(--radius);
+}
+
+.doc-header a:hover { color: var(--up); border-color: var(--up); }
+
+.doc-main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 20px 0;
+}
+
+.doc-main h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.doc-main .subtitle {
+  color: var(--text-3);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.doc-main h2 {
+  font-size: 15px;
+  color: var(--text);
+  margin: 30px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-main h3 {
+  font-size: 13px;
+  color: var(--text);
+  margin: 18px 0 6px;
+  font-weight: 700;
+}
+
+.doc-main p { margin: 8px 0; color: var(--text-2); }
+
+.doc-main ul,
+.doc-main ol { margin: 8px 0 8px 20px; padding: 0; }
+
+.doc-main li { margin: 4px 0; color: var(--text-2); }
+
+.doc-main code {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  padding: 0 4px;
+  border-radius: 2px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.doc-main pre {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.doc-main pre code { background: none; border: none; padding: 0; }
+
+.doc-main kbd {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 2px;
+  padding: 0 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.callout {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--up);
+  padding: 10px 12px;
+  margin: 12px 0;
+  color: var(--text-2);
+  font-size: 12.5px;
+}
+
+.callout strong { color: var(--text); }
+
+.table-wrap { overflow-x: auto; margin: 10px 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 480px;
+  background: var(--panel);
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 5px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: var(--panel-alt);
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+td { color: var(--text-2); }
+
+tbody tr:nth-child(even) td { background: #fcfcfd; }
+
+.kline-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.swatch {
+  display: inline-block;
+  width: 22px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 1px;
+  vertical-align: middle;
+}
+
+.swatch.red { background: var(--up); }
+.swatch.green { background: var(--down); }
+
+.faq { margin-top: 10px; }
+
+.faq details {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  margin-bottom: 6px;
+  padding: 0 12px;
+}
+
+.faq summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--text);
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "Q "; color: var(--text-3); font-weight: 700; }
+.faq details[open] summary { border-bottom: 1px solid var(--border); }
+.faq details p { padding: 8px 0; margin: 0; }
+
+@media (max-width: 640px) {
+  .doc-main { padding: 16px 12px 0; }
+  .doc-main h1 { font-size: 17px; }
+}

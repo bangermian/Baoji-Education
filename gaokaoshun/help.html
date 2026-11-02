@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用说明 · 高考顺</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%23e02b2b'/><text x='50' y='70' font-size='58' text-anchor='middle' fill='%23fff' font-family='sans-serif'>高</text></svg>">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/help.css">
+</head>
+<body class="doc">
+  <header class="doc-header">
+    <div class="logo">高考顺 · 使用说明</div>
+    <a href="index.html">← 返回应用</a>
+  </header>
+
+  <main class="doc-main">
+    <h1>把录取位次当股票看</h1>
+    <p class="subtitle">核心指标是<strong>位次</strong>而不是分数 —— 位次不受试卷难度影响，跨年可比。</p>
+
+    <h2>1. 核心概念</h2>
+    <p>系统把高考录取数据对标股票 K 线：一所院校（或一个专业）就是一只股票，每年的录取位次就是价格。</p>
+    <ul>
+      <li><strong>个股</strong>：某所院校在某省招生的历年位次走势</li>
+      <li><strong>板块</strong>：同一地区 / 同一层次（92、双一流、S11 等）院校的整体表现</li>
+      <li><strong>大盘</strong>：某个大区（东部、中部等）的整体竞争激烈程度</li>
+    </ul>
+    <div class="callout">
+      <strong>位次越小越难考。</strong>所以个股图的纵轴是翻转的：第 1 名在最上方，"向上"= 变得更难考。
+    </div>
+
+    <h3>「收盘位次」到底取哪个数</h3>
+    <p>一所学校有几十个专业，每个专业一条录取线。系统取的是：</p>
+    <pre><code>收盘位次 = Σ(该专业最低位次 × 该专业录取人数) ÷ Σ录取人数</code></pre>
+    <p>也就是<strong>各专业录取线按招生规模加权平均</strong>。招 300 人的专业自然比招 2 人的更能代表这所学校。</p>
+    <div class="callout">
+      <strong>为什么不用「最高位次」参与？</strong>
+      早先的算法是 <code>(最高位次 + 最低位次) / 2</code>，但掌上高考只公开最低位次。
+      有最高位次的数据会系统性偏"难"约 11%，两种口径混在一起就没法跨校比较了，
+      所以统一改成只看录取线。最高位次仍然保留，用于填写时的完整性校验。
+    </div>
+    <p>K 线的上影线 / 下影线表示<strong>全校专业录取线的跨度</strong>：
+    上沿是最难专业的录取线，下沿是最易专业的录取线。鼠标悬停能看到具体数值。</p>
+
+    <h2>2. 数据填入格式</h2>
+    <div class="callout">
+      <strong>不用再手动选了。</strong>把 Excel / CSV 丢进项目的 <code>data/</code> 目录
+      （可以建子文件夹，一级文件夹名会被当作「院校所在地」），刷新页面即自动加载。
+      页面每 45 秒会自己检查一次，<strong>往目录里新增或改动文件，它会自动重新加载</strong>。
+    </div>
+    <div class="callout">
+      <strong>现在只需要一张表。</strong>点顶部「模板」下载 <code>高考顺_数据模板.xlsx</code>，
+      在「分数数据」表里一行填一个专业，放进 <code>data/</code> 即可。
+      文件名、文件夹层级都不再是约束。
+    </div>
+
+    <h3>推荐格式：汇总表</h3>
+    <p>一个文件可以放任意多行、任意多学校、任意多年份：</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>年份</th><th>招生省份</th><th>院校名称</th><th>院校所在地</th><th>板块</th><th>专业名称</th><th>最高分</th><th>最低分</th><th>最高位次</th><th>最低位次</th><th>录取人数</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2025</td><td>天津</td><td>天津工业大学</td><td>天津</td><td>双一流</td><td>计算机科学与技术</td><td>630</td><td>610</td><td>7000</td><td>11000</td><td>10</td></tr>
+          <tr><td>2024</td><td>天津</td><td>天津工业大学</td><td>天津</td><td>双一流</td><td>计算机科学与技术</td><td>620</td><td>600</td><td>8000</td><td>12000</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>列名</th><th>必填</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>年份</td><td>是</td><td>4 位数字</td></tr>
+          <tr><td>招生省份</td><td>是</td><td>该院校在哪个省招生，决定用哪个省的考生数换算百分位</td></tr>
+          <tr><td>院校名称</td><td>是</td><td>同名 + 同招生省份 = 同一只"股票"</td></tr>
+          <tr><td>专业名称</td><td>是</td><td>一行一个专业</td></tr>
+          <tr><td>最低位次</td><td>是</td><td>该专业当年的最低录取位次</td></tr>
+          <tr><td>最高位次</td><td>否</td><td>不影响收盘位次（只用于校验和导入完整性）；缺省时用最低位次填充</td></tr>
+          <tr><td>最高分 / 最低分</td><td>否</td><td>缺一补一；都缺则不画「分差柱状图」</td></tr>
+          <tr><td>录取人数</td><td>否</td><td>缺省按 0 处理，聚合权重退化为等权</td></tr>
+          <tr><td>院校所在地</td><td>否</td><td>缺省取文件所在文件夹名；再缺省记为「待定」</td></tr>
+          <tr><td>板块</td><td>否</td><td>可写 <code>92</code> / <code>双一流</code> / <code>新型研究型</code> / <code>中外合办</code> / <code>双非</code>，缺省双非</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>板块是「标签」，不是「单选」。</strong>
+      985/211 院校同时属于 <code>92</code> 和 <code>双一流</code>；新型研究型院校也属于双一流。
+      所以在「板块」页选「双一流」时，92 院校会一起算进来——这是刻意的，真实世界里它们本来就是双一流。
+      反过来，「92 板块」应当是「双一流」的子集，两个数字不该相等。
+      <br>中外合办（S11）单独成一类；双非不并入任何其它板块。
+    </div>
+
+    <h3>考生数表（强烈建议填）</h3>
+    <p>位次只有除以该省当年考生总数才有跨省、跨年的可比性：</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>年份</th><th>省份</th><th>考生数</th></tr></thead>
+        <tbody>
+          <tr><td>2025</td><td>天津</td><td>74000</td></tr>
+          <tr><td>2024</td><td>天津</td><td>70800</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>不填也能有，但会失真。</strong>缺考生数时统一按 7 万估算。
+      同一个省内比较不受影响（常数相同，排序不变），但<strong>跨省合并（大盘、板块指数）会严重失真</strong>——
+      河南 130 万考生按 7 万算，百分位会被放大近 19 倍。
+    </div>
+    <div class="callout">
+      <strong>更好的办法：给一分一段表就够了。</strong>
+      一分一段表最后一行的「累计人数」就是该年该科类的考生规模，系统会自动拿它当分母。
+      一份表同时解决「分数→位次」和「考生数是多少」两件事，不用再单独填人数。
+      自己填的考生数优先级更高。
+    </div>
+
+    <h3>一分一段表（把分数换算成位次）</h3>
+    <p>很多学校官网只发<strong>分数</strong>、不发<strong>位次</strong>。这时再准备一张一分一段表，系统就能自动换算：</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>年份</th><th>省份</th><th>分数</th><th>累计人数</th></tr></thead>
+        <tbody>
+          <tr><td>2025</td><td>天津</td><td>680</td><td>656</td></tr>
+          <tr><td>2025</td><td>天津</td><td>679</td><td>722</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>先加载一分一段表，再加载分数数据</strong>——缺位次的记录会用「该分数对应的累计人数」补上，
+    加载结果里会告诉你换算了多少条。分数低于表尾、或没有对应年份的表时不会瞎猜，会被跳过并统计条数。</p>
+
+    <h3>招生计划（招生人数）</h3>
+    <p>大学官网和掌上高考的「招生计划」页大多<strong>翻页才能看全</strong>，脚本抓不到全部；
+    但页面上的数据是看得见、选得中的。所以走<strong>粘贴导入</strong>：</p>
+    <ol>
+      <li>在网页上选中「专业名称 / 计划招生」那几列 → <kbd>Ctrl+C</kbd></li>
+      <li>回到高考顺，点顶部 <strong>「粘贴导入」</strong></li>
+      <li>填好年份、招生省份、院校名称，粘进文本框</li>
+      <li>看预览里的「合计 N 人」对不对，点导入</li>
+    </ol>
+    <p>导入后，成交量柱和「录取率估计」会自动用这个人数。翻页的表格勾上「累加到该年」，
+    一页一页粘，它会累加；不勾则覆盖（改错时用）。</p>
+
+    <h3>仍然兼容旧格式</h3>
+    <p>以前那种「一个文件 = 一所学校一年、元数据写在文件名里」的用法继续有效：</p>
+    <pre><code>年份 招生省份 院校名称 板块 考生数.xlsx
+例：2025 天津 天津工业大学 doublefirst 74000.xlsx</code></pre>
+    <p>目录结构随意，一级文件夹名会被当作「院校所在地」。支持 <code>.xlsx</code> / <code>.xls</code> / <code>.csv</code>（CSV 自动识别 UTF-8 与 GB18030），表头不要求在第一行，会向下扫描 15 行自动定位。</p>
+
+    <h2>3. 计算公式</h2>
+    <h3>专业平均位次</h3>
+    <p><code>(最高位次 + 最低位次) ÷ 2</code></p>
+
+    <h3>院校收盘位次</h3>
+    <p><code>Σ(专业平均位次 × 该专业录取人数) ÷ Σ(录取人数)</code>，缺人数时等权。</p>
+
+    <h3>开盘位次</h3>
+    <p><code>上一年的收盘位次</code>；首年开盘 = 当年收盘。</p>
+
+    <h3>上下影线</h3>
+    <p>上影线取当年所有专业里<strong>最好</strong>的位次，下影线取<strong>最差</strong>的位次。</p>
+
+    <h3>百分位（这一版的重点改进）</h3>
+    <p><code>百分位 = 该校当年收盘位次 ÷ 该省当年考生数 × 100</code></p>
+    <div class="callout">
+      <strong>为什么先算百分位：</strong>位次的绝对值跨省不可比 —— 天津第 10000 名和北京第 10000 名不是一回事，
+      两省考生规模也不同。旧版直接把各省的原始位次做加权平均再除以一个分母，量纲是错的。
+      现在先把每所学校换算成"在自己省里排前百分之几"，再按招生人数加权，
+      这样不同省份的学校才能放进同一个指数。
+    </div>
+
+    <h3>热度指数（大盘 / 板块）</h3>
+    <p><code>热度 = 100 - Σ(各校百分位 × 招生人数) ÷ Σ(招生人数)</code></p>
+    <p>数值越大 → 该区域/板块整体越难考。个股与指数的图形都满足「向上 = 变难」。</p>
+
+    <h2>4. 怎么看 K 线</h2>
+    <div class="kline-demo">
+      <span><span class="swatch red">红</span> 比上一年<strong>更难</strong>（位次下降 / 热度上升）</span>
+      <span><span class="swatch green">绿</span> 比上一年<strong>更易</strong>（位次上升 / 热度下降）</span>
+    </div>
+    <ul>
+      <li><strong>实体</strong>：开盘到收盘的区间，实体越长说明当年变化越大</li>
+      <li><strong>影线</strong>：当年最好 / 最差的位次</li>
+      <li><strong>成交量柱</strong>：当年招生总人数，红=扩招，绿=缩招</li>
+      <li><strong>均线 MA</strong>：近 N 年的收盘均值；周期超过样本量时自动不画（比如只有 5 年数据时不会画 MA10）</li>
+      <li><strong>灰色虚线</strong>：<strong>同类基准</strong>——同省、同板块所有院校的平均水平，见下节</li>
+      <li><strong>图钉标记</strong>：红色标历年最难、绿色标历年最易、橙色标「断档?」</li>
+      <li><strong>分差柱</strong>：校内专业冷热差，用 P10–P90 而不是最高分−最低分</li>
+    </ul>
+
+    <div class="callout">
+      <strong>关于"开盘价"：</strong>高考录取没有"开盘"这个事件，这里用的是
+      <code>开盘 = 上一年收盘</code>。所以 K 线实体本质上就是"两年收盘之差"，
+      影线是"当年专业位次的范围"。它比折线图多的是<strong>年度区间信息</strong>，
+      而<strong>不是</strong>股票那种多空博弈。请不要用"十字星""缺口"这类形态去解读它。
+    </div>
+
+    <h2>5. 三个更靠谱的指标</h2>
+
+    <h3>同类基准与相对强度</h3>
+    <p>单看一所学校的位次走势，分不清是"它变难了"还是"全省都变难了"。所以图上有一条灰色虚线：</p>
+    <p><code>基准 = 同省、同板块所有院校的加权平均百分位</code>，再按当年考生数换算回"位次"画在同一个纵轴上。</p>
+    <p>顶部信息条的<strong>「相对同类」</strong>是两者的差：</p>
+    <p><code>相对强度 = 本校百分位 − 同类基准百分位</code>（单位：百分点 pp）</p>
+    <ul>
+      <li><strong>负数（红）</strong>：本校百分位更小 = 排名更靠前 = 比同类<strong>更难</strong>。说明它跑赢了同类。</li>
+      <li><strong>正数（绿）</strong>：比同类<strong>更易</strong>，相对在降温。</li>
+    </ul>
+
+    <h3>录取率估计（控制扩招/缩招）</h3>
+    <p><code>录取率估计 = 招生人数 ÷ 收盘位次 × 100</code></p>
+    <p>位次变化可能只是扩招或缩招造成的：某专业从招 10 人扩到 30 人，位次必然下滑，但竞争强度没变。
+    这个指标把"供给"从价格里除掉：扩招 3 倍 → 数值涨 3 倍（确实更容易），考生翻倍 → 位次翻倍 → 数值减半（确实更难）。</p>
+    <p><em>注意：这是近似。严格算要用一分一段表，把位次换算成"该位次以上还有多少人"。</em></p>
+
+    <h3>断档检测</h3>
+    <p>某年某专业没招满，位次会突然暴涨，一根长绿柱足以把均线带偏。系统用稳健方法自动识别：</p>
+    <p><code>MAD = median(|同比变化 − 中位数|)</code>，当 <code>|同比变化 − 中位数| > max(3 × 1.4826 × MAD, 20%)</code> 时标记「断档?」。</p>
+    <p>这里不用"均值 ± 3σ"，因为那个异常值会把均值和标准差一起拽走（掩蔽效应），MAD 不会被带偏。</p>
+
+    <h2>6. 走势解读（有分寸地看）</h2>
+    <ul>
+      <li><strong>连续红柱</strong> → 录取难度逐年上升，竞争加剧</li>
+      <li><strong>K 线持续高于灰色基准线</strong> → 该校相对同类在变强，这是比绝对走势更有信息量的信号</li>
+      <li><strong>量价背离</strong>：位次上升但招生人数大幅缩减 → 热度可能靠"饥饿营销"虚高，需警惕</li>
+      <li><strong>断档标记</strong>：那一年的数据不要直接拿来做趋势判断，先核对原始表</li>
+    </ul>
+    <div class="callout">
+      <strong>不要用它来预测。</strong>录取数据通常只有 5–7 个点，任何"金叉/死叉""趋势启动"的说法在这个样本量上都没有统计支撑。
+      这套图的价值是<strong>把历史讲清楚</strong>，不是预测明年。
+    </div>
+
+    <h2>7. 操作提示</h2>
+    <ul>
+      <li>点「加载数据」选数据根目录，系统递归读取全部 Excel/CSV</li>
+      <li>切换「大盘 / 板块 / 个股」查看不同维度，三张图联动缩放</li>
+      <li>个股页输入院校与招生省份 → 点「加载个股」；下拉可切到单个专业</li>
+      <li>均线周期（MA1~MA4）改动后自动重绘，设置会记住</li>
+      <li>「导出当前个股」支持纵向专业格式 / 横向年份格式</li>
+      <li>「导出全部」把每所院校导成一个工作表</li>
+      <li>数据与手录记录自动存到浏览器本地（IndexedDB），刷新不丢；点「清空」可清除</li>
+    </ul>
+
+    <h2>8. 常见问题</h2>
+    <div class="faq">
+      <details>
+        <summary>双击 index.html 打开是白屏 / 只在顶部提示？</summary>
+        <p>本项目用 ES Module 组织代码，浏览器禁止在 <code>file://</code> 下加载模块。请双击项目根目录的 <code>启动.cmd</code>，或访问 GitHub Pages 在线版。</p>
+      </details>
+      <details>
+        <summary>加载后提示"文件名不规范"？</summary>
+        <p>文件名必须至少包含「年份 招生省份 院校」三段，用空格分隔，例如 <code>2025 天津 天津工业大学.xlsx</code>。板块与考生数可省略。控制台（F12）会列出每一个被跳过的文件及原因。</p>
+      </details>
+      <details>
+        <summary>图表区域一片空白，但数据列表有数据？</summary>
+        <p>通常是图表库没加载成功。检查网络，或把 <code>echarts.min.js</code>、<code>xlsx.full.min.js</code> 放进项目根目录的 <code>vendor/</code> 文件夹，页面会优先使用本地副本。</p>
+      </details>
+      <details>
+        <summary>为什么"大盘/板块"不能手动录入？</summary>
+        <p>因为大盘与板块是<strong>聚合结果</strong>，由个股数据自动算出。手动录入会和自动值互相覆盖，所以旧版那两个表单已被移除；要修正数据请到「个股」页手动录入。</p>
+      </details>
+      <details>
+        <summary>同一个文件夹加载两次会重复吗？</summary>
+        <p>不会。写入以「院校 + 专业 + 年份」为唯一键，重复加载是幂等的（覆盖更新）。</p>
+      </details>
+      <details>
+        <summary>文理分科省份的百分位是不是算偏了？</summary>
+        <p>是的，这是目前<strong>已知的局限</strong>：位次是<strong>科类内</strong>的排名，而「考生数」表填的是全省总数。
+        对天津、浙江这类综合改革省份没有问题；对河南、四川这类文理分科省份，
+        分母应该用<strong>该科类</strong>的考生数，否则百分位会系统性偏低（大约低一半）。
+        在数据表里补齐科类之前，请把「考生数」填成对应科类的考生数，或干脆不填（此时按 7 万估算并标注）。</p>
+      </details>
+      <details>
+        <summary>为什么有些年份标了「样本偏少」？</summary>
+        <p>该年招生人数少于 20 人。样本太小时，加权平均位次会非常不稳定，
+        一个小专业的波动就能让整条 K 线跳起来，看趋势时要打折。</p>
+      </details>
+    </div>
+  </main>
+</body>
+</html>
